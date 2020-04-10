@@ -10,5 +10,5 @@ El TSP tiene diversas aplicaciones aún en su formulación más simple, tales co
 En la teoría de la complejidad computacional, la versión de decisión del TSP (donde, dado un largo “L”, la tarea es decidir cuál grafo tiene un camino menor que L) pertenece a la clase de los problemas NP-completos. Por tanto, es probable que en el caso peor el tiempo de ejecución para cualquier algoritmo que resuelva el TSP aumente de forma exponencial con respecto al número de ciudades.
 
 # Formato de ficheros
-Primera fila: contiene el número de ciudades
+Primera fila: contiene el número de ciudades.
 El resto de las filas contiene la posición x e y de cada ciudad
