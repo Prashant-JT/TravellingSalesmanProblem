@@ -1,3 +1,5 @@
+from builtins import set
+
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import os
@@ -20,12 +22,24 @@ Point = namedtuple("Point", ['x', 'y'])
 def length(point1, point2):
     return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2)
 
-def check_solution(obj):
-    # comprobar que todos los nodos son distintos (all different), recorrer la lista
-    # sumando los pesos y que acabe en la misma ciudad en la que empezó
-    if True:
-        return obj
-    return null
+def check_solution(solution, points, nodeCount, total=0):
+    if solution[0] != solution[-1]:
+        print("solución inválida, el vértice inicial y el final no son iguales")
+        return 0
+    else:
+        solution.pop()
+        if len(set(solution)) != len(solution):
+            print("solución inválida, existen vértices que se visitan más de una vez")
+            return 0
+        if set(solution) != set(points):
+            print("solución inválida, existen vértices que no se encuentran en el fichero")
+            return 0
+        else:
+            solution.append(solution[0])
+            for i in range(0, nodeCount):
+                total += length(solution[i], solution[i + 1])
+
+    return total
 
 def printGraph(g):
     print(nx.info(g))
@@ -43,18 +57,7 @@ def solve_it(input_data):
         parts = line.split()
         points.append(Point(float(parts[0]), float(parts[1])))
 
-    # visit the nodes in the order they appear in the file
-    solution = range(0, nodeCount)
-
-    # calculate the length of the tour
-    obj = length(points[solution[-1]], points[solution[0]])
-    for index in range(0, nodeCount-1):
-        obj += length(points[solution[index]], points[solution[index+1]])
-
-    # prepare the solution in the specified output format
-    output_data = '%.2f' % obj + ' ' + str(0) + '\n'
-    output_data += ' '.join(map(str, solution))
-
+    """
     # create a graph k-complete
     G = nx.complete_graph(nodeCount, create_using=nx.Graph())
     printGraph(G)
@@ -71,8 +74,17 @@ def solve_it(input_data):
             W[i] = T.degree[i]
     #M = nx.is_perfect_matching(G, matching=W)
     #print(W)
+    """
+    solution = points.copy()
+    solution.append(points[0])
 
-    return output_data, check_solution(obj)
+    total = check_solution(solution, points, nodeCount)
+
+    # prepare the solution in the specified output format
+    output_data = '%.2f' % total + ' ' + str(0) + '\n'
+    output_data += ' '.join(map(str, range(0, solution)))
+
+    return output_data, total
 
 if __name__ == "__main__":
     for dirname, _, filenames in os.walk('data'):
