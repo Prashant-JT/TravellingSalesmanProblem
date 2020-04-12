@@ -1,3 +1,5 @@
+from builtins import print
+
 import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 import os
@@ -58,18 +60,29 @@ def christofides_algorithm(nodeCount):
     3. Separate nodes with odd degree and get perfect matching
     """
     G = nx.complete_graph(nodeCount, create_using=nx.Graph())
+    print("-------------------------")
+    print("Grafo inicial")
     printGraph(G)
+    print("-------------------------")
 
     T = nx.minimum_spanning_tree(G, weight='None', algorithm='prim', ignore_nan=False)
+    print("Árbol de expansión mínima ")
     printGraph(T)
+    print("-------------------------")
 
     W = {}
     for i in range(0, nodeCount - 1):
-        print(i, T.degree[i])
+        print("nodo =", i, "tiene grado =", T.degree[i])
         if T.degree[i] % 2 != 0:
             W[i] = T.degree[i]
-    # M = nx.is_perfect_matching(G, matching=W)
-    # print(W)
+    print("-------------------------")
+    print("Vértices con grado impar")
+    print(W)
+    print("-------------------------")
+
+
+    M = nx.is_perfect_matching(T, {1:3, 3:1})
+    print(M)
 
 
 def solve_it(input_data):
