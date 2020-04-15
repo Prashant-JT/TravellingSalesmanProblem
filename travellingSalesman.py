@@ -47,31 +47,45 @@ def check_solution(solution, points, nodeCount, total=0):
     return total"""
 
 
-def printGraph(g):
-    print(nx.info(g))
-    nx.draw(g, with_labels=True)
+def printGraph(G):
+    print(nx.info(G))
+    pos = nx.spring_layout(G)
+    plt.figure(1)
+    nx.draw(G, pos)
+    nx.draw_networkx_edge_labels(G, pos, with_labels=True)
+    nx.draw_networkx_labels(G, pos, font_size=10, font_family='sans-serif')
     plt.show()
 
 
-def christofides_algorithm(nodeCount):
+def christofides_algorithm(points, nodeCount):
     """
     1. Create a graph k-complete
     2. Obtain the minimum spanning tree (prim is good for a lot of edges)
-    3. Separate nodes with odd degree and get perfect matching
+    3. Separate nodes with odd degree and get the perfect matching
+    4.
     """
-    G = nx.complete_graph(nodeCount, create_using=nx.Graph())
+    G = nx.Graph()
+    #table = [[0 for i in range(nodeCount)] for j in range(nodeCount)]
+    # J = nx.complete_graph(nodeCount, create_using=nx.Graph())
+    # Estos for crearán el mismo grafo que crearía la línea de arriba solo que este será con los datos del fichero (k-completo)
+    for i in range(0, nodeCount):
+        for j in range(0, nodeCount):
+            #table[i][j] = length(points[i], points[j])
+            if i != j:
+                G.add_edge(i, j, weight=length(points[i], points[j]))
+
     print("-------------------------")
     print("Grafo inicial")
     printGraph(G)
     print("-------------------------")
 
-    T = nx.minimum_spanning_tree(G, weight='None', algorithm='prim', ignore_nan=False)
+    T = nx.minimum_spanning_tree(G, weight='weight', algorithm='prim', ignore_nan=False)
     print("Árbol de expansión mínima ")
     printGraph(T)
     print("-------------------------")
 
     W = {}
-    for i in range(0, nodeCount - 1):
+    for i in range(0, nodeCount):
         print("nodo =", i, "tiene grado =", T.degree[i])
         if T.degree[i] % 2 != 0:
             W[i] = T.degree[i]
@@ -80,9 +94,10 @@ def christofides_algorithm(nodeCount):
     print(W)
     print("-------------------------")
 
-
-    M = nx.is_perfect_matching(T, {1:3, 3:1})
+    M = nx.is_perfect_matching(T, {3:1, 4:1})
+    print("Emparejamiento perfecto")
     print(M)
+    print("-------------------------")
 
 
 def solve_it(input_data):
@@ -95,7 +110,7 @@ def solve_it(input_data):
         parts = line.split()
         points.append(Point(float(parts[0]), float(parts[1])))
 
-    christofides_algorithm(nodeCount)
+    christofides_algorithm(points, nodeCount)
 
     # visit the nodes in the order they appear in the file
     solution = range(0, nodeCount)
