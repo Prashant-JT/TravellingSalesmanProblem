@@ -1,5 +1,5 @@
 # TravellingSalesmanProblem
-Optimizing TravellingSalesmanProblem
+Optimizando TravellingSalesmanProblem
 
 El problema del vendedor viajero, problema del vendedor ambulante, problema del agente viajero o problema del viajante (TSP por sus siglas en inglés (Travelling Salesman Problem)), responde a la siguiente pregunta: dada una lista de ciudades y las distancias entre cada par de ellas, ¿cuál es la ruta más corta posible que visita cada ciudad exactamente una vez y al finalizar regresa a la ciudad origen? Este es un problema NP-Hard dentro en optimización combinatoria, muy importante en la investigación de operaciones y en la ciencia de la computación.
 
