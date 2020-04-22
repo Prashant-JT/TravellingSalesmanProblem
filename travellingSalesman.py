@@ -138,7 +138,6 @@ def solve_it(input_data):
         # compute with greedy algorithm
         min = float('inf')
         solution = [0] * (nodeCount + 1)
-        solution[0] = 0
         visited = [0] * nodeCount
         visited[0] = points[0]
         n = 1
