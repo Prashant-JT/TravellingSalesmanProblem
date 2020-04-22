@@ -25,6 +25,12 @@ def length(point1, point2):
     return math.sqrt((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2)
 
 
+def gc_collect(*param):
+    for i in param:
+        del i
+    gc.collect()
+
+
 def check_solution(solution, points, nodeCount):
     if solution[0] != solution[-1]:
         print("solución inválida, el vértice inicial y el final no son iguales")
@@ -71,11 +77,11 @@ def minimumWeightedMatching(MST, G, odd_vert):
 
 def christofides_algorithm(points, nodeCount):
     """
-    1. Create a graph k-complete
-    2. Obtain the minimum spanning tree (prim is good for a lot of edges)
-    3. Separate nodes with odd degree and get the perfect matching
+    1. Create a k-complete graph
+    2. Get the minimum spanning tree
+    3. Get nodes with odd degree and get the perfect matching
     4. Add nodes and get an Eulerian path
-    5. Get Hamiltionan circuit
+    5. Get a Hamiltonian cycle
     """
     Gr = nx.Graph()
     for i in range(0, nodeCount):
@@ -83,15 +89,7 @@ def christofides_algorithm(points, nodeCount):
             if i != j:
                 Gr.add_edge(i, j, weight=length(points[i], points[j]))
 
-    # print("-------------------------")
-    # print("Grafo inicial")
-    # printGraph(G)
-    # print("-------------------------")
-
     T = nx.minimum_spanning_tree(Gr, weight='weight', algorithm='prim', ignore_nan=False)
-    # print("Árbol de expansión mínima ")
-    # printGraph(T)
-    # print("-------------------------")
 
     a = []
     for i in range(0, nodeCount):
@@ -99,15 +97,21 @@ def christofides_algorithm(points, nodeCount):
             a.append(i)
 
     eulerM = nx.MultiGraph(T)
+    gc_collect(T)
     minimumWeightedMatching(eulerM, Gr, a)
+    gc_collect(Gr, a)
 
+    # euler
     eulerEdges = list(nx.eulerian_circuit(eulerM))
+    gc_collect(eulerM)
     path = list(itertools.chain.from_iterable(eulerEdges))
+    gc_collect(eulerEdges)
 
-    # hamiltonian
-    path1 = list(dict.fromkeys(path).keys())
-    path1.append(0)
-    return path1
+    # hamilton
+    hamiltonian_cycle = list(dict.fromkeys(path).keys())
+    gc_collect(path)
+    hamiltonian_cycle.append(0)
+    return hamiltonian_cycle
 
 
 def solve_it(input_data):
@@ -120,24 +124,22 @@ def solve_it(input_data):
         parts = line.split()
         points.append(Point(float(parts[0]), float(parts[1])))
 
-    if nodeCount < 1:
-        # apply Christofides algorithm
-        origen = Point(0.0, 0.0)
+    if nodeCount < 5000:
+        # compute with Christofides algorithm
+        origin = Point(0.0, 0.0)
 
-        def sortPoints(it):
-            return length(it, origen)
-
-        points.sort(reverse=True, key=sortPoints)
+        points.sort(key=lambda point: length(point, origin), reverse=True)
 
         solution = christofides_algorithm(points, nodeCount)
         obj = check_solution(solution, points, nodeCount)
         print("Nodos-> ", nodeCount, " Valor-> ", obj, "(christofides)")
 
     else:
+        # compute with greedy algorithm
         min = float('inf')
-        solution = [0 for i in range(nodeCount + 1)]
+        solution = [0] * (nodeCount + 1)
         solution[0] = 0
-        visited = [0 for i in range(nodeCount)]
+        visited = [0] * nodeCount
         visited[0] = points[0]
         n = 1
 
@@ -153,8 +155,7 @@ def solve_it(input_data):
             n += 1
             min = float('inf')
 
-        del(min, min_node, pos, visited, n)
-        gc.collect()
+        gc_collect(min, min_node, pos, visited, n)
 
         solution[-1] = solution[0]
 
