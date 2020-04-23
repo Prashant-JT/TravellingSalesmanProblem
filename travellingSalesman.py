@@ -164,7 +164,7 @@ def solve_it(input_data):
         def sortPoints(it):
             return length(it, origen)
 
-        points.sort(reverse=True, key=sortPoints)
+        points.sort(reverse=True, key=lambda it: length(it, origen))
         solution = christofides_algorithm(points, nodeCount)
     else:
         arr = pd.DataFrame.from_records(points)
