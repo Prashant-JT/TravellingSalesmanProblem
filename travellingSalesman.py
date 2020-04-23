@@ -9,6 +9,7 @@ from IPython.display import FileLink
 import csv
 import itertools
 import gc
+from sklearn.cluster import KMeans
 
 def submission_generation(filename, str_output):
     with open(filename, 'w', newline='') as file:
@@ -60,19 +61,17 @@ def printGraph(G):
     plt.show()
 
 
-# utility function that adds minimum weight matching edges to MST
-def minimumWeightedMatching(MST, G, odd_vert):
-    while odd_vert:
-        v = odd_vert.pop()
+def minimumWeightedMatching(MST, G, odds):
+    while odds:
+        v = odds.pop()
         weight = float("inf")
-        u = 1
         closest = 0
-        for u in odd_vert:
+        for u in odds:
             if G[v][u]['weight'] < weight:
                 weight = G[v][u]['weight']
                 closest = u
         MST.add_edge(v, closest, weight=weight)
-        odd_vert.remove(closest)
+        odds.remove(closest)
 
 
 def christofides_algorithm(points, nodeCount):
@@ -114,6 +113,41 @@ def christofides_algorithm(points, nodeCount):
     return hamiltonian_cycle
 
 
+def twoInception(kmeans, points, solution):
+    for i in range(0, 10):
+        aux = list(np.where(kmeans.labels_ == i)[0])
+        pointsAux = [points[x] for x in aux]
+        dictAux = dict(zip(pointsAux, aux))
+        arrTwo = pd.DataFrame.from_records(pointsAux)
+        kmeansTwo = KMeans(n_clusters=10).fit(arrTwo)
+        for j in range(0, 10):
+            aux = list(np.where(kmeansTwo.labels_ == j)[0])
+            final = [dictAux.get(z) for z in [pointsAux[y] for y in aux]]
+            solution.extend(final)
+    return solution
+
+
+def threeInception(kmeans, points, solution):
+    for i in range(0, 10):
+        aux = list(np.where(kmeans.labels_ == i)[0])
+        pointsAux = [points[x] for x in aux]
+        dictAux = dict(zip(pointsAux, aux))
+        arrTwo = pd.DataFrame.from_records(pointsAux)
+        kmeansTwo = KMeans(n_clusters=10).fit(arrTwo)
+        for j in range(0, 10):
+            aux1 = list(np.where(kmeansTwo.labels_ == j)[0])
+            pointsAux1 = [pointsAux[x] for x in aux1]
+            dictAux1 = dict(zip(pointsAux1, aux1))
+            arrTwo1 = pd.DataFrame.from_records(pointsAux1)
+            kmeansTwo1 = KMeans(n_clusters=10).fit(arrTwo1)
+            for k in range(0, 10):
+                a = list(np.where(kmeansTwo1.labels_ == k)[0])
+                final1 = [dictAux1.get(z) for z in [pointsAux1[y] for y in a]]
+                final = [dictAux.get(z) for z in [pointsAux[y] for y in final1]]
+                solution.extend(final)
+    return solution
+
+
 def solve_it(input_data):
     lines = input_data.split('\n')
     nodeCount = int(lines[0])
@@ -124,42 +158,29 @@ def solve_it(input_data):
         parts = line.split()
         points.append(Point(float(parts[0]), float(parts[1])))
 
-    if nodeCount < 5000:
-        # compute with Christofides algorithm
-        origin = Point(0.0, 0.0)
+    if nodeCount < 4000:
+         origen = Point(0.0, 0.0)
 
-        points.sort(key=lambda point: length(point, origin), reverse=True)
+        def sortPoints(it):
+            return length(it, origen)
 
+        points.sort(reverse=True, key=sortPoints)
         solution = christofides_algorithm(points, nodeCount)
-        obj = check_solution(solution, points, nodeCount)
-        print("Nodos-> ", nodeCount, " Valor-> ", obj, "(christofides)")
-
     else:
-        # compute with greedy algorithm
-        min = float('inf')
-        solution = [0] * (nodeCount + 1)
-        visited = [0] * nodeCount
-        visited[0] = points[0]
-        n = 1
+        arr = pd.DataFrame.from_records(points)
 
-        for i in range(0, nodeCount - 1):
-            for j in range(0, nodeCount):
-                if points[j] not in visited:
-                    if length(visited[n-1], points[j]) < min:
-                        min = length(visited[n-1], points[j])
-                        min_node = points[j]
-                        pos = j
-            solution[n] = pos
-            visited[n] = min_node
-            n += 1
-            min = float('inf')
+        kmeans = KMeans(n_clusters=10).fit(arr)
+        solution = []
 
-        gc_collect(min, min_node, pos, visited, n)
+        if nodeCount < 10000:
+            twoInception(kmeans, points, solution)
+        else:
+            threeInception(kmeans, points, solution)
 
-        solution[-1] = solution[0]
-
-        obj = check_solution(solution, points, nodeCount)
-        print("Nodos-> ", nodeCount, " Valor-> ", obj, "(greedy)")
+        solution.append(solution[0])
+        
+    obj = check_solution(solution, points, nodeCount)    
+    print("Nodos-> ", nodeCount, " Valor-> ", obj, "(greedy)")
 
     # prepare the solution in the specified output format
     output_data = '%.2f' % obj + ' ' + str(0) + '\n'
