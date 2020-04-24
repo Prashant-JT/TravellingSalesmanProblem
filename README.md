@@ -12,3 +12,5 @@ En la teoría de la complejidad computacional, la versión de decisión del TSP 
 # Formato de ficheros
 Primera fila: contiene el número de ciudades.
 El resto de las filas contiene la posición x e y de cada ciudad
+
+Tiempos de los ficheros: https://1drv.ms/x/s!AlJm4jmDhB4Ghlc9cjuRYD7z7KWS?e=FEe2tN
