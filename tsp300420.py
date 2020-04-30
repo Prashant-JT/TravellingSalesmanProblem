@@ -37,7 +37,7 @@ def twoOpt(solution, pts):
         if distNew < distAct:
             solution[i+1:i+4] = aux
         i += 1
-        
+
 
 def check_solution(solution, points, nodeCount):
     if solution[0] != solution[-1]:
@@ -184,7 +184,25 @@ def threeInception(kmeans, points, solution):
 
                 final = [dictAux.get(z) for z in [pointsAux[y] for y in final1]]
 
-                solution.extend(final)
+                centroide = Point(kmeansTwo1.cluster_centers_[k][0], kmeansTwo1.cluster_centers_[k][1])
+                final.sort(key=lambda t: length(points[t], centroide))
+
+                v = final.pop()
+                a = [v]
+
+                while final:
+                    weight = np.inf
+                    closest = 0
+                    for u in final:
+                        if length(points[v], points[u]) < weight:
+                            weight = length(points[v], points[u])
+                            closest = u
+
+                    a.append(closest)
+                    final.remove(closest)
+                    v = closest
+
+                solution.extend(a)
 
     return solution
 
