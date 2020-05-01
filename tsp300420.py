@@ -10,6 +10,7 @@ import csv
 import itertools
 import gc
 from sklearn.cluster import KMeans
+from random import sample
 
 
 def submission_generation(filename, str_output):
@@ -27,16 +28,49 @@ def length(point1, point2):
     return math.sqrt((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2)
 
 
-def twoOpt(solution, pts):
+def twoOpt_(solution, pts):
+    print("ahora aqui")
     i = 0
-    while i < len(solution)-4:
-        aux = solution[i+1:i+4]
-        distAct = length(pts[solution[i]], pts[aux[0]]) + length(pts[aux[-1]], pts[solution[i+4]])
+    while i < len(solution) - 4:
+        aux = solution[i + 1:i + 4]
+        distAct = length(pts[solution[i]], pts[aux[0]]) + length(pts[aux[-1]], pts[solution[i + 4]])
         aux.reverse()
-        distNew = length(pts[solution[i]], pts[aux[0]]) + length(pts[aux[-1]], pts[solution[i+4]])
+        distNew = length(pts[solution[i]], pts[aux[0]]) + length(pts[aux[-1]], pts[solution[i + 4]])
         if distNew < distAct:
-            solution[i+1:i+4] = aux
+            solution[i + 1:i + 4] = aux
         i += 1
+
+
+def generate_random_nodes(nodeCount):
+    nodes = [0, 1]
+    while abs(nodes[0] - nodes[1]) <= 3:
+        nodes = sample(range(0, nodeCount), 2)
+
+    nodes.sort()
+    return nodes[0], nodes[1]
+
+
+def twoOpt(solution, points, nodeCount):
+    if nodeCount < 100:
+        cont = 1000
+    elif nodeCount < 10000:
+        cont = 100000
+    else:
+        cont = 1000000
+
+    print("estoy aqui")
+    while cont:
+        a, b = generate_random_nodes(nodeCount)
+
+        aux = solution[a+1:b]
+        distAct = length(points[solution[a]], points[aux[0]]) + length(points[aux[-1]], points[solution[b]])
+        aux.reverse()
+        distNew = length(points[solution[a]], points[aux[0]]) + length(points[aux[-1]], points[solution[b]])
+
+        if distNew < distAct:
+            solution[a+1:b] = aux
+
+        cont -= 1
 
 
 def check_solution(solution, points, nodeCount):
@@ -44,7 +78,6 @@ def check_solution(solution, points, nodeCount):
         print("solución inválida, el vértice inicial y el final no son iguales")
         return 0
     else:
-        twoOpt(solution, points)
         a = solution.pop()
 
         if len(set(solution)) != len(solution):
@@ -131,6 +164,7 @@ def christofides_algorithm(points, nodeCount):
 
 
 def twoInception(kmeans, points, solution):
+    subsArr = [0]
     for i in range(0, 10):
 
         aux = list(np.where(kmeans.labels_ == i)[0])
@@ -148,12 +182,49 @@ def twoInception(kmeans, points, solution):
 
             final = [dictAux.get(z) for z in [pointsAux[y] for y in aux1]]
 
-            solution.extend(final)
+            centroide = Point(kmeansTwo.cluster_centers_[j][0], kmeansTwo.cluster_centers_[j][1])
+            final.sort(key=lambda t: length(points[t], centroide))
+
+            v = final.pop()
+            a = [v]
+
+            while final:
+                weight = np.inf
+                closest = 0
+                for u in final:
+                    if length(points[v], points[u]) < weight:
+                        weight = length(points[v], points[u])
+                        closest = u
+
+                a.append(closest)
+                final.remove(closest)
+                v = closest
+
+            solution.extend(a)
+            subsArr.append(len(solution))
+
+    x = 1
+    first = solution[subsArr[0]:subsArr[1]]
+    while x < len(subsArr)-2:
+        aux = solution[subsArr[x]:subsArr[x + 1]]
+
+        distAct = length(points[first[-1]], points[aux[0]]) + length(points[aux[-1]],
+                                                                     points[solution[subsArr[x + 1] + 1]])
+        aux.reverse()
+        distNew = length(points[first[-1]], points[aux[0]]) + length(points[aux[-1]],
+                                                                     points[solution[subsArr[x + 1] + 1]])
+
+        if distNew < distAct:
+            solution[subsArr[x]:subsArr[x + 1]] = aux
+
+        first = aux
+        x += 1
 
     return solution
 
 
 def threeInception(kmeans, points, solution):
+    subsArr = [0]
     for i in range(0, 10):
 
         aux = list(np.where(kmeans.labels_ == i)[0])
@@ -194,8 +265,9 @@ def threeInception(kmeans, points, solution):
                     weight = np.inf
                     closest = 0
                     for u in final:
-                        if length(points[v], points[u]) < weight:
-                            weight = length(points[v], points[u])
+                        aux = length(points[v], points[u])
+                        if aux < weight:
+                            weight = aux
                             closest = u
 
                     a.append(closest)
@@ -203,6 +275,22 @@ def threeInception(kmeans, points, solution):
                     v = closest
 
                 solution.extend(a)
+                subsArr.append(len(solution))
+
+    x = 1
+    first = solution[subsArr[0]:subsArr[1]]
+    while x < len(subsArr)-2:
+        aux = solution[subsArr[x]:subsArr[x+1]]
+
+        distAct = length(points[first[-1]], points[aux[0]]) + length(points[aux[-1]], points[solution[subsArr[x+1]+1]])
+        aux.reverse()
+        distNew = length(points[first[-1]], points[aux[0]]) + length(points[aux[-1]], points[solution[subsArr[x+1]+1]])
+
+        if distNew < distAct:
+            solution[subsArr[x]:subsArr[x+1]] = aux
+
+        first = aux
+        x += 1
 
     return solution
 
@@ -235,6 +323,7 @@ def solve_it(input_data):
             threeInception(kmeans, points, solution)
 
     solution.append(solution[0])
+    twoOpt(solution, points, nodeCount)
     obj = check_solution(solution, points, nodeCount)
 
     del points
