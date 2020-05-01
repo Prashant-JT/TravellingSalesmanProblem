@@ -171,8 +171,8 @@ def threeInception(kmeans, points, solution):
 def generate_random_nodes(nodeCount):
     nodes = [0, 1]
     # check for adjacency
-    while abs(nodes[0] - nodes[1]) <= 2:
-        nodes = sample(range(1, nodeCount), 2)
+    while abs(nodes[0] - nodes[1]) <= 3:
+        nodes = sample(range(0, nodeCount), 2)
 
     nodes.sort()
     return nodes[0], nodes[1]
@@ -189,12 +189,11 @@ def get_distances(solution, points, nodeCount):
 
 def simulated_annealing(solution, nodeCount, points):
     counter = 0
-    delta, alpha = 20, 0.5
+    delta = 20
+    alpha = 0.3
     T = (-delta / math.log(0.99, 10))
-    N = 10
-    n = 0
 
-    while counter <= 2 and T != 0:
+    while counter <= 5 and T != 0:
         actual_distance, new_distance, sub, node1, node2 = get_distances(solution, points, nodeCount)
         delta = new_distance - actual_distance
         if delta >= 0: # no se mejora
@@ -208,10 +207,14 @@ def simulated_annealing(solution, nodeCount, points):
             counter = 0
             solution[node1+1:node2] = sub
             best_solution = solution.copy()
-        T = alpha * T
+        T = T * alpha
         print("Temperatura actual : ", T)
 
-    return best_solution
+    is_local = "best_solution" in locals()
+    if is_local:
+        return best_solution
+    else:
+        return solution
 
 
 def solve_it(input_data):
