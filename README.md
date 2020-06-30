@@ -1,16 +1,12 @@
 # Travelling Salesman Problem
-Optimizing TravellingSalesmanProblem
+The traveling salesman problem (TSP) answers the following question: given a list of cities and the distances between each pair Of these, what is the shortest possible route that visits each city exactly once and when finished returns to the origin city? This is an NP-Hard problem within combinatorial optimization, very important in operations research and in computer science. The problem was first formulated in 1930 and is one of the most studied optimization problems. It is used as a test for many optimization methods. Although the problem is computationally complex, a large number of exact heuristics and methods are known, so that some instances from one hundred to thousands of cities can be solved.
 
-El problema del vendedor viajero, problema del vendedor ambulante, problema del agente viajero o problema del viajante (TSP por sus siglas en inglés (Travelling Salesman Problem)), responde a la siguiente pregunta: dada una lista de ciudades y las distancias entre cada par de ellas, ¿cuál es la ruta más corta posible que visita cada ciudad exactamente una vez y al finalizar regresa a la ciudad origen? Este es un problema NP-Hard dentro en optimización combinatoria, muy importante en la investigación de operaciones y en la ciencia de la computación.
+The TSP has various applications even in its simplest formulation, such as: planning, logistics and in the manufacture of electronic circuits. Slightly modified, it appears as: a sub-problem in many areas, such as in the DNA sequence. In this application, the concept of “city” represents, for example: customers, welding points, or DNA fragments, and the concept of “distance” represents travel time or cost, or a measure of similarity between DNA fragments. In many applications, additional restrictions like resource limit or time windows make the problem considerably difficult. The TSP is a special case of Traveling Purchaser Problem.
 
-El problema fue formulado por primera vez en 1930 y es uno de los problemas de optimización más estudiados. Es usado como prueba para muchos métodos de optimización. Aunque el problema es computacionalmente complejo, una gran cantidad de heurísticas y métodos exactos son conocidos, de manera que, algunas instancias desde cien hasta miles de ciudades pueden ser resueltas.
+In computational complexity theory, the decision version of the TSP (where, given a big "L", the task is to decide which graph has a path less than L) belongs to the class of NP-complete problems. Therefore, in the worst case, the execution time for any algorithm that solves the TSP is likely to increase exponentially with respect to the number of cities.
 
-El TSP tiene diversas aplicaciones aún en su formulación más simple, tales como: la planificación, la logística y en la fabricación de circuitos electrónicos. Un poco modificado, aparece como: un sub-problema en muchas áreas, como en la secuencia de ADN. En esta aplicación, el concepto de “ciudad” representa, por ejemplo: clientes, puntos de soldadura o fragmentos de ADN y el concepto de “distancia” representa el tiempo de viaje o costo, o una medida de similitud entre los fragmentos de ADN. En muchas aplicaciones, restricciones adicionales como el límite de recurso o las ventanas de tiempo hacen el problema considerablemente difícil. El TSP es un caso especial de los Problemas del Comprador Viajante (travelling purchaser problem).
-
-En la teoría de la complejidad computacional, la versión de decisión del TSP (donde, dado un largo “L”, la tarea es decidir cuál grafo tiene un camino menor que L) pertenece a la clase de los problemas NP-completos. Por tanto, es probable que en el caso peor el tiempo de ejecución para cualquier algoritmo que resuelva el TSP aumente de forma exponencial con respecto al número de ciudades.
-
-# Formato de ficheros
-Primera fila: contiene el número de ciudades.
-El resto de las filas contiene la posición x e y de cada ciudad
+# Files format
+First row: contains the number of cities.
+The rest of the rows contain the x and y position of each city
 
 Tiempos de los ficheros: https://1drv.ms/x/s!AlJm4jmDhB4Ghlc9cjuRYD7z7KWS?e=FEe2tN
