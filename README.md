@@ -8,5 +8,3 @@ In computational complexity theory, the decision version of the TSP (where, give
 ## Files format
 First row: contains the number of cities.
 The rest of the rows contain the x and y position of each city
-
-Tiempos de los ficheros: https://1drv.ms/x/s!AlJm4jmDhB4Ghlc9cjuRYD7z7KWS?e=FEe2tN
