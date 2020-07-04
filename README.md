@@ -8,3 +8,7 @@ In computational complexity theory, the decision version of the TSP (where, give
 ## Files format
 First row: contains the number of cities.
 The rest of the rows contain the x and y position of each city
+
+For more information (in Spanish): [PDF format](https://github.com/Prashant-JT/TravellingSalesmanProblem/blob/master/tsp.pdf) or in [Jupyter format](https://github.com/Prashant-JT/TravellingSalesmanProblem/blob/master/tsp.ipynb).
+
+To see the results obtained of the [files in data](https://github.com/Prashant-JT/TravellingSalesmanProblem/tree/master/TSP_Concorde/data): [results](https://github.com/Prashant-JT/TravellingSalesmanProblem/blob/master/results.csv)
